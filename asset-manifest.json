@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.dbe95241.css",
+    "main.js": "/static/js/main.dda16adb.js",
+    "static/media/lato-regular.woff2": "/static/media/lato-regular.ccacef709e90aef550de.woff2",
+    "static/media/photo_user.avif": "/static/media/photo_user.cbf83c9280e70c6b4188.avif",
+    "index.html": "/index.html",
+    "main.dbe95241.css.map": "/static/css/main.dbe95241.css.map",
+    "main.dda16adb.js.map": "/static/js/main.dda16adb.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dbe95241.css",
+    "static/js/main.dda16adb.js"
+  ]
+}
