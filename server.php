@@ -20,8 +20,8 @@ class Chat implements MessageComponentInterface {
     }
 
     function onOpen(ConnectionInterface $conn) {
-        $conn->user_id    = null;
-        $conn->username   = 'Гость';
+        $conn->user_id = null;
+        $conn->username = 'Гость';
         $conn->avatar_path = null;
 
         $this->clients->attach($conn);
@@ -33,12 +33,14 @@ class Chat implements MessageComponentInterface {
         if (empty($msg)) return;
         $data = json_decode($msg, true);
 
+        error_log("RAW MSG: " . $msg);
+
         if (!$data) {
             error_log("JSON PARSE FAILED: " . $msg);
             return;
         }
 
-        // === АВТОРИЗАЦИЯ ===
+        // --- Авторизация ---
         if (($data['type'] ?? '') === 'auth') {
             $user_id = (int)($data['user_id'] ?? 0);
 
@@ -71,9 +73,13 @@ class Chat implements MessageComponentInterface {
             $text    = trim($data['text'] ?? '');
             $room_id = (int)$data['room_id'];
 
-            if ($text === '' || !$from->user_id || !$room_id) return;
+            if ($text === '' || !$from->user_id || !$room_id) {
+                return;
+            }
 
-            $stmt = $this->pdo->prepare("SELECT user1_id, user2_id FROM rooms WHERE id = ?");
+            $stmt = $this->pdo->prepare(
+                "SELECT user1_id, user2_id FROM rooms WHERE id = ?"
+            );
             $stmt->execute([$room_id]);
             $room = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -119,18 +125,18 @@ class Chat implements MessageComponentInterface {
             return;
         }
 
-        // === МЕДИА / ФАЙЛЫ (Картинки, видео, документы, архивы...) ===
-        if (($data['type'] ?? '') === 'media_batch_with_text' && isset($data['room_id'])) {
-            $room_id = (int)$data['room_id'];
-            $media   = $data['media'] ?? [];
-            $text    = trim($data['text'] ?? '');
+        // === МАССИВ КАРТИНОК (без текста) ===
+        if (($data['type'] ?? '') === 'image_batch' && isset($data['room_id'])) {
+            $room_id    = (int)$data['room_id'];
+            $imagePaths = $data['image_paths'] ?? [];
 
-            if (!is_array($media) || empty($media) || !$from->user_id) {
+            if (!is_array($imagePaths) || empty($imagePaths) || !$from->user_id) {
                 return;
             }
 
-            // Проверка доступа к комнате
-            $stmt = $this->pdo->prepare("SELECT user1_id, user2_id FROM rooms WHERE id = ?");
+            $stmt = $this->pdo->prepare(
+                "SELECT user1_id, user2_id FROM rooms WHERE id = ?"
+            );
             $stmt->execute([$room_id]);
             $room = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -149,19 +155,15 @@ class Chat implements MessageComponentInterface {
 
             $to_id = ($from->user_id === $user1) ? $user2 : $user1;
 
-            // media_path — JSON-массив всех медиа
-            $mediaJson = json_encode($media);
-
             $stmt = $this->pdo->prepare(
-                "INSERT INTO messages (user_id, to_user_id, room_id, text, media_path)
-                 VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO messages (user_id, to_user_id, room_id, text, image_paths) 
+                 VALUES (?, ?, ?, NULL, ?)"
             );
             $result = $stmt->execute([
                 $from->user_id,
                 $to_id,
                 $room_id,
-                $text !== '' ? $text : null,
-                $mediaJson,
+                json_encode($imagePaths)
             ]);
 
             if (!$result) {
@@ -171,63 +173,191 @@ class Chat implements MessageComponentInterface {
 
             $message_id = (int)$this->pdo->lastInsertId();
 
-            // Сохраняем каждое медиа в message_media
-            $mediaStmt = $this->pdo->prepare(
-                "INSERT INTO message_media (message_id, type, path, mime, name)
-                 VALUES (?, ?, ?, ?, ?)"
-            );
-            foreach ($media as $m) {
-                $mediaStmt->execute([
-                    $message_id,
-                    $m['type']  ?? 'file',
-                    $m['path']  ?? '',
-                    $m['mime']  ?? null,
-                    $m['name']  ?? null,
-                ]);
-            }
-
-            // Формируем payload для рассылки
             $payload = json_encode([
-                'type'        => 'media_batch_with_text',
+                'type'        => 'image_batch',
                 'id'          => $message_id,
                 'from'        => $from->user_id,
                 'to'          => $to_id,
                 'room_id'     => $room_id,
                 'username'    => $from->username,
-                'media'       => $media,
+                'image_paths' => $imagePaths,
+                'time'        => date('H:i'),
+                'avatar_path' => $from->avatar_path,
+                'is_read'     => 0,
+            ]);
+
+            if (isset($this->users[$to_id])) {
+                $this->users[$to_id]->send($payload);
+            }
+            $from->send($payload);
+            return;
+        }
+
+        // === МАССИВ КАРТИНОК + ТЕКСТ ===
+        if (($data['type'] ?? '') === 'image_batch_with_text' && isset($data['room_id'])) {
+            $room_id    = (int)$data['room_id'];
+            $imagePaths = $data['image_paths'] ?? [];
+            $text       = trim($data['text'] ?? '');
+
+            if (!is_array($imagePaths) || empty($imagePaths) || !$from->user_id) {
+                return;
+            }
+
+            $stmt = $this->pdo->prepare(
+                "SELECT user1_id, user2_id FROM rooms WHERE id = ?"
+            );
+            $stmt->execute([$room_id]);
+            $room = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$room) {
+                $from->send(json_encode(['type' => 'error', 'text' => 'Комната не найдена']));
+                return;
+            }
+
+            $user1 = (int)$room['user1_id'];
+            $user2 = (int)$room['user2_id'];
+
+            if ($from->user_id !== $user1 && $from->user_id !== $user2) {
+                $from->send(json_encode(['type' => 'error', 'text' => 'Нет доступа к комнате']));
+                return;
+            }
+
+            $to_id = ($from->user_id === $user1) ? $user2 : $user1;
+
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO messages (user_id, to_user_id, room_id, text, image_paths) 
+                 VALUES (?, ?, ?, ?, ?)"
+            );
+            $result = $stmt->execute([
+                $from->user_id,
+                $to_id,
+                $room_id,
+                $text !== '' ? $text : null,
+                json_encode($imagePaths)
+            ]);
+
+            if (!$result) {
+                error_log("INSERT FAILED: " . print_r($stmt->errorInfo(), true));
+                return;
+            }
+
+            $message_id = (int)$this->pdo->lastInsertId();
+
+            $payload = json_encode([
+                'type'        => 'image_batch_with_text',
+                'id'          => $message_id,
+                'from'        => $from->user_id,
+                'to'          => $to_id,
+                'room_id'     => $room_id,
+                'username'    => $from->username,
+                'image_paths' => $imagePaths,
                 'text'        => $text,
                 'time'        => date('H:i'),
                 'avatar_path' => $from->avatar_path,
                 'is_read'     => 0,
             ]);
 
-            // Отправляем получателю (если онлайн)
             if (isset($this->users[$to_id])) {
                 $this->users[$to_id]->send($payload);
             }
-            // Отправляем обратно отправителю
             $from->send($payload);
             return;
         }
 
-        // === ПРОЧИТАНО ===
+        // === ФАЙЛЫ + ТЕКСТ (новый блок) ===
+        if (($data['type'] ?? '') === 'file_batch_with_text' && isset($data['room_id'])) {
+            $room_id   = (int)$data['room_id'];
+            $filePaths = $data['file_paths'] ?? [];
+            $text      = trim($data['text'] ?? '');
+
+            if (!is_array($filePaths) || (empty($filePaths) && $text === '') || !$from->user_id) {
+                return;
+            }
+
+            $stmt = $this->pdo->prepare(
+                "SELECT user1_id, user2_id FROM rooms WHERE id = ?"
+            );
+            $stmt->execute([$room_id]);
+            $room = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$room) {
+                $from->send(json_encode(['type' => 'error', 'text' => 'Комната не найдена']));
+                return;
+            }
+
+            $user1 = (int)$room['user1_id'];
+            $user2 = (int)$room['user2_id'];
+
+            if ($from->user_id !== $user1 && $from->user_id !== $user2) {
+                $from->send(json_encode(['type' => 'error', 'text' => 'Нет доступа к комнате']));
+                return;
+            }
+
+            $to_id = ($from->user_id === $user1) ? $user2 : $user1;
+
+            // Сохраняем в messages — пути в file_paths (JSON), текст отдельно
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO messages (user_id, to_user_id, room_id, text, file_paths)
+                 VALUES (?, ?, ?, ?, ?)"
+            );
+            $result = $stmt->execute([
+                $from->user_id,
+                $to_id,
+                $room_id,
+                $text !== '' ? $text : null,
+                !empty($filePaths) ? json_encode($filePaths) : null,
+            ]);
+
+            if (!$result) {
+                error_log("INSERT FAILED: " . print_r($stmt->errorInfo(), true));
+                return;
+            }
+
+            $message_id = (int)$this->pdo->lastInsertId();
+
+            $payload = json_encode([
+                'type'        => 'file_batch_with_text',
+                'id'          => $message_id,
+                'from'        => $from->user_id,
+                'to'          => $to_id,
+                'room_id'     => $room_id,
+                'username'    => $from->username,
+                'file_paths'  => $filePaths,
+                'text'        => $text,
+                'time'        => date('H:i'),
+                'avatar_path' => $from->avatar_path,
+                'is_read'     => 0,
+            ]);
+
+            if (isset($this->users[$to_id])) {
+                $this->users[$to_id]->send($payload);
+            }
+            $from->send($payload);
+            return;
+        }
+
+        // === ОБРАБОТКА "ПРОЧИТАНО" ===
         if (($data['type'] ?? '') === 'mark_all_read') {
             $room_id = (int)($data['room_id'] ?? 0);
             $user_id = (int)($data['user_id'] ?? 0);
 
-            if (!$room_id || !$user_id || !$from->user_id) return;
+            if (!$room_id || !$user_id || !$from->user_id) {
+                return;
+            }
 
             $stmt = $this->pdo->prepare(
-                "SELECT id, user_id FROM messages
+                "SELECT id, user_id FROM messages 
                  WHERE room_id = ? AND is_read = 0 AND user_id != ?"
             );
             $stmt->execute([$room_id, $user_id]);
             $unreadMessages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (empty($unreadMessages)) return;
+            if (empty($unreadMessages)) {
+                return;
+            }
 
             $updateStmt = $this->pdo->prepare(
-                "UPDATE messages SET is_read = 1
+                "UPDATE messages SET is_read = 1 
                  WHERE room_id = ? AND is_read = 0 AND user_id != ?"
             );
             $updateStmt->execute([$room_id, $user_id]);
@@ -245,7 +375,7 @@ class Chat implements MessageComponentInterface {
                 }
             }
 
-            echo "Помечено прочитанными: " . count($unreadMessages) . " в комнате $room_id\n";
+            echo "Помечено прочитанными: " . count($unreadMessages) . " сообщений в комнате $room_id\n";
             return;
         }
 

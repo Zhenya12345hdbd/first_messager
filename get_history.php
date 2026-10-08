@@ -13,7 +13,7 @@ if (!$room_id) {
 try {
     $stmt = $pdo->prepare("
         SELECT m.id, m.text, m.created_at, m.user_id AS from_user_id, 
-               m.room_id, m.is_read, m.image_path, m.image_paths,
+               m.room_id, m.is_read, m.image_path, m.image_paths, m.file_paths,
                u.first_name, u.last_name, u.avatar_path
         FROM messages m
         JOIN users u ON m.user_id = u.id
@@ -27,8 +27,8 @@ try {
         return [
             'id'           => (int)$row['id'],
             'text'         => $row['text'],
-            'image_path'   => $row['image_path'],
-            'image_paths'  => $row['image_paths'],
+            'file_paths'   => $row['file_paths'] ? json_decode($row['file_paths'], true) : null,
+            'from'         => (int)$row['from_user_id'],
             'from_user_id' => (int)$row['from_user_id'],
             'room_id'      => (int)$row['room_id'],
             'is_read'      => (int)$row['is_read'],

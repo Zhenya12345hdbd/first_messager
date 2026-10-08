@@ -1,9 +1,9 @@
 <?php
 // db.php — подключение к MySQL (OpenServer: root без пароля)
-$host = '127.0.0.1';
+$host = 'MySQL-8.0';
 $dbname = 'chat_db';
 $user = 'root';
-$pass = 'admin';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass, [

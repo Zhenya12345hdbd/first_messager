@@ -55,52 +55,6 @@ INSERT INTO `messages` (`id`, `user_id`, `to_user_id`, `room_id`, `text`, `image
 (9, 1, 11, 1, NULL, NULL, '[{\"mime\": \"video/mp4\", \"name\": \"sample-10s.mp4\", \"path\": \"/uploads/videos/ddf80af7030b4f34.mp4\", \"size\": 5485935, \"type\": \"videos\", \"safe_name\": \"ddf80af7030b4f34.mp4\"}]', 0, '2026-10-08 20:09:39'),
 (10, 1, 11, 1, NULL, NULL, '[{\"mime\": \"image/png\", \"name\": \"Shape sp-347-0-3.png\", \"path\": \"/uploads/images/a01934319961abdc.png\", \"size\": 149, \"type\": \"images\", \"safe_name\": \"a01934319961abdc.png\"}]', 0, '2026-10-08 20:09:54');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `rooms`
---
-
-CREATE TABLE `rooms` (
-  `id` int NOT NULL,
-  `user1_id` int NOT NULL,
-  `user2_id` int NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `rooms`
---
-
-INSERT INTO `rooms` (`id`, `user1_id`, `user2_id`, `created_at`) VALUES
-(1, 1, 11, '2026-09-21 13:09:22'),
-(2, 1, 2, '2026-09-21 13:25:17'),
-(3, 2, 11, '2026-09-21 13:25:36');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `users`
---
-
-CREATE TABLE `users` (
-  `id` int NOT NULL,
-  `first_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `avatar_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `users`
---
-
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `password`, `avatar_path`, `created_at`) VALUES
-(1, 'Евгений', 'Абаров', '$2y$10$NEYuO1AOHa8O7WocaKpdkumfqDxRcMbHtWob7IAHfgYFouaESrXeO', '/uploads/avatars/user_1789473036_444.jpg', '2026-09-15 11:50:36'),
-(2, 'Петр', 'Петров', '$2y$10$hDBGgNSdAv4.tu2w3RjxIuLT0Aq.ECTH5hOp4LtT.ejxSyovma8KC', '/uploads/avatars/user_1789473881_338.png', '2026-09-15 12:04:42'),
-(11, 'Маша', 'Машина', '$2y$10$SABnduzsimp0y8JRFZlZXO68g8SbSdJIospq1yDkyI/XtKimcwYT6', '/uploads/avatars/user_1789729897_266.jpg', '2026-09-18 11:11:37');
-
 --
 -- Индексы сохранённых таблиц
 --
@@ -114,20 +68,6 @@ ALTER TABLE `messages`
   ADD KEY `idx_user` (`user_id`);
 
 --
--- Индексы таблицы `rooms`
---
-ALTER TABLE `rooms`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_pair` (`user1_id`,`user2_id`),
-  ADD KEY `user2_id` (`user2_id`);
-
---
--- Индексы таблицы `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -136,29 +76,6 @@ ALTER TABLE `users`
 --
 ALTER TABLE `messages`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT для таблицы `rooms`
---
-ALTER TABLE `rooms`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT для таблицы `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- Ограничения внешнего ключа сохраненных таблиц
---
-
---
--- Ограничения внешнего ключа таблицы `rooms`
---
-ALTER TABLE `rooms`
-  ADD CONSTRAINT `rooms_ibfk_1` FOREIGN KEY (`user1_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `rooms_ibfk_2` FOREIGN KEY (`user2_id`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

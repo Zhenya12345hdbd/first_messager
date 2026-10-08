@@ -13,55 +13,62 @@ if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
 }
 
 $file     = $_FILES['file'];
-$mime     = mime_content_type($file['tmp_name']);
 $origName = $file['name'];
 $size     = $file['size'];
 
+// Ограничение 100 МБ
 if ($size > 100 * 1024 * 1024) {
     echo json_encode(['error' => 'Файл слишком большой (макс. 100 МБ)']);
     exit;
 }
 
-// --- СОРТИРОВКА ПО ПАПКАМ ---
+// Безопасное имя
+$ext = pathinfo($origName, PATHINFO_EXTENSION);
+$safeName = bin2hex(random_bytes(8)) . ($ext ? '.' . strtolower($ext) : '');
+
+// Определение типа
+$mime = mime_content_type($file['tmp_name']);
 $type = 'files';
 
+// Для картинок — дополнительная проверка
 if (str_starts_with($mime, 'image/')) {
+    $info = @getimagesize($file['tmp_name']);
+    if (!$info) {
+        echo json_encode(['error' => 'Некорректный файл изображения']);
+        exit;
+    }
     $type = 'images';
 } elseif (str_starts_with($mime, 'video/')) {
     $type = 'videos';
 } elseif (str_starts_with($mime, 'audio/')) {
     $type = 'audio';
-} elseif (str_starts_with($mime, 'application/pdf')) {
+} elseif (in_array($mime, ['application/pdf'], true)) {
     $type = 'documents';
-} elseif (in_array($mime, [
-    'application/zip', 'application/x-rar-compressed',
-    'application/x-7z-compressed', 'application/gzip',
-]) || preg_match('/\.(zip|rar|7z|tar|gz)$/i', $origName)) {
+} elseif (preg_match('/\.(zip|rar|7z|tar|gz)$/i', $origName)) {
     $type = 'archives';
 } elseif (in_array($mime, [
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'text/plain', 'text/csv', 'application/rtf',
-])) {
+    'text/plain', 'text/csv'
+], true)) {
     $type = 'documents';
 }
 
-// --- СОЗДАНИЕ ПАПКИ ---
-$targetDir = __DIR__ . '/uploads/' . $type;
+// Папка
+$baseDir = __DIR__ . '/uploads';
+$targetDir = $baseDir . '/' . $type;
 
+if (!is_dir($baseDir)) {
+    mkdir($baseDir, 0755, true);
+}
 if (!is_dir($targetDir)) {
-    if (!mkdir($targetDir, 0775, true)) {
+    if (!mkdir($targetDir, 0755, true)) {
         error_log("mkdir failed: " . $targetDir);
         echo json_encode(['error' => 'Не удалось создать папку: ' . $type]);
         exit;
     }
 }
 
-// --- СОХРАНЕНИЕ ФАЙЛА ---
-$ext        = pathinfo($origName, PATHINFO_EXTENSION);
-$safeName   = bin2hex(random_bytes(8)) . ($ext ? '.' . $ext : '');
 $targetPath = $targetDir . '/' . $safeName;
 
 if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
@@ -70,19 +77,15 @@ if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
     exit;
 }
 
-// --- ТИП ДЛЯ ФРОНТА ---
-$mediaType = 'file';
-if ($type === 'images')     $mediaType = 'image';
-elseif ($type === 'videos') $mediaType = 'video';
-elseif ($type === 'audio')  $mediaType = 'audio';
-
+// Относительный путь для фронтенда
 $webPath = '/uploads/' . $type . '/' . $safeName;
 
 echo json_encode([
-    'path' => $webPath,
-    'type' => $mediaType,
-    'mime' => $mime,
-    'name' => $origName,
-    'size' => $size,
+    'path'      => $webPath,
+    'type'      => $type,
+    'mime'      => $mime,
+    'name'      => $origName,
+    'size'      => $size,
+    'safe_name' => $safeName, // можно сохранить в БД, если нужно
 ]);
 ?>
