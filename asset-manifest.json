@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.dbe95241.css",
-    "main.js": "/static/js/main.dda16adb.js",
+    "main.css": "/static/css/main.5deaffde.css",
+    "main.js": "/static/js/main.379edd4f.js",
     "static/media/lato-regular.woff2": "/static/media/lato-regular.ccacef709e90aef550de.woff2",
     "static/media/photo_user.avif": "/static/media/photo_user.cbf83c9280e70c6b4188.avif",
     "index.html": "/index.html",
-    "main.dbe95241.css.map": "/static/css/main.dbe95241.css.map",
-    "main.dda16adb.js.map": "/static/js/main.dda16adb.js.map"
+    "main.5deaffde.css.map": "/static/css/main.5deaffde.css.map",
+    "main.379edd4f.js.map": "/static/js/main.379edd4f.js.map"
   },
   "entrypoints": [
-    "static/css/main.dbe95241.css",
-    "static/js/main.dda16adb.js"
+    "static/css/main.5deaffde.css",
+    "static/js/main.379edd4f.js"
   ]
 }

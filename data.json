@@ -1,0 +1,48 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "first_name": "Анна",
+      "last_name": "Петрова",
+      "avatar_path": "/images/avatars/anna.jpg"
+    },
+    {
+      "id": 2,
+      "first_name": "Иван",
+      "last_name": "Сидоров",
+      "avatar_path": "/images/avatars/ivan.jpg"
+    },
+    {
+      "id": 3,
+      "first_name": "Мария",
+      "last_name": "Козлова",
+      "avatar_path": "/images/avatars/maria.jpg"
+    }
+  ],
+  "rooms": [
+    {"id": 101, "user1_id": 1, "user2_id": 2, "label": "Анна и Иван"},
+    {"id": 102, "user1_id": 1, "user2_id": 3, "label": "Анна и Мария"}
+  ],
+  "messages": [
+    {
+      "id": 1001,
+      "user_id": 1,
+      "to_user_id": 2,
+      "room_id": 101,
+      "text": "Привет, Иван! Как дела?",
+      "image_paths": [],
+      "is_read": 1,
+      "time": "10:15"
+    },
+    {
+      "id": 1002,
+      "user_id": 2,
+      "to_user_id": 1,
+      "room_id": 101,
+      "text": "Всё отлично!",
+      "image_paths": [],
+      "is_read": 0,
+      "time": "10:20"
+    }
+  ]
+}
