@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Окт 02 2026 г., 16:43
+-- Время создания: Окт 08 2026 г., 18:33
 -- Версия сервера: 5.7.39-log
 -- Версия PHP: 8.2.12
 
@@ -36,54 +36,85 @@ CREATE TABLE `messages` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `is_read` tinyint(1) NOT NULL DEFAULT '0',
   `image_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image_paths` json DEFAULT NULL
+  `image_paths` json DEFAULT NULL,
+  `media_path` json DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Дамп данных таблицы `messages`
 --
 
-INSERT INTO `messages` (`id`, `user_id`, `to_user_id`, `room_id`, `text`, `created_at`, `is_read`, `image_path`, `image_paths`) VALUES
-(1, 1, 11, 1, 'jjj', '2026-09-28 13:48:34', 1, NULL, NULL),
-(2, 1, 11, 1, 'gg', '2026-09-29 05:48:55', 1, NULL, NULL),
-(3, 1, 11, 1, NULL, '2026-09-29 05:51:41', 1, 'uploads/chat_images/img_6abb51ecd25b2_1790661100.jpg', NULL),
-(4, 11, 1, 1, 'ghenj', '2026-09-29 06:07:41', 1, NULL, NULL),
-(5, 1, 11, 1, 'fff', '2026-09-29 07:18:37', 1, NULL, NULL),
-(6, 1, 11, 1, NULL, '2026-09-29 07:18:49', 1, NULL, '[\"uploads/chat_images/img_6abb665971400_1790666329.jpg\"]'),
-(7, 1, 11, 1, NULL, '2026-09-29 07:19:21', 1, NULL, '[\"uploads/chat_images/img_6abb667919e28_1790666361.jpg\"]'),
-(8, 1, 11, 1, NULL, '2026-09-29 11:16:14', 1, NULL, '[\"uploads/chat_images/img_6abb9dfde7897_1790680573.jpg\", \"uploads/chat_images/img_6abb9dfe00fcf_1790680574.png\"]'),
-(9, 1, 11, 1, 'апап', '2026-09-29 11:16:23', 1, NULL, NULL),
-(10, 1, 11, 1, NULL, '2026-09-29 11:16:35', 1, NULL, '[\"uploads/chat_images/img_6abb9e12dc9d6_1790680594.jpg\"]'),
-(11, 1, 11, 1, NULL, '2026-09-29 13:03:23', 1, NULL, '[\"uploads/chat_images/img_6abbb71b92af8_1790687003.jpg\", \"uploads/chat_images/img_6abbb71ba144b_1790687003.jpg\", \"uploads/chat_images/img_6abbb71baef5f_1790687003.png\", \"uploads/chat_images/img_6abbb71bb2047_1790687003.png\"]'),
-(12, 1, 11, 1, 'fdgfg', '2026-09-29 13:13:31', 1, NULL, NULL),
-(13, 1, 11, 1, NULL, '2026-09-29 13:14:07', 1, NULL, '[\"uploads/chat_images/img_6abbb99fbb358_1790687647.jpg\"]'),
-(14, 1, 11, 1, 'kk', '2026-09-30 08:29:23', 1, NULL, NULL),
-(15, 1, 11, 1, 'dd', '2026-09-30 08:31:00', 1, NULL, NULL),
-(16, 1, 11, 1, NULL, '2026-09-30 08:52:28', 1, NULL, '[\"uploads/chat_images/img_6abccdccbc716_1790758348.jpg\"]'),
-(17, 1, 11, 1, 'hhh', '2026-09-30 08:52:43', 1, NULL, NULL),
-(18, 1, 11, 1, NULL, '2026-09-30 08:53:02', 1, NULL, '[\"uploads/chat_images/img_6abccdee7e6e9_1790758382.jpg\"]'),
-(19, 1, 11, 1, NULL, '2026-09-30 08:54:14', 1, NULL, '[\"uploads/chat_images/img_6abcce363c0ac_1790758454.jpg\", \"uploads/chat_images/img_6abcce3646fa4_1790758454.png\", \"uploads/chat_images/img_6abcce364a2a2_1790758454.png\"]'),
-(20, 1, 11, 1, NULL, '2026-09-30 10:27:34', 1, NULL, '[\"uploads/chat_images/img_6abce4160669e_1790764054.jpg\"]'),
-(21, 1, 11, 1, 'fgfg', '2026-09-30 10:27:41', 1, NULL, NULL),
-(22, 1, 11, 1, NULL, '2026-09-30 10:27:50', 1, NULL, '[\"uploads/chat_images/img_6abce426bd61b_1790764070.jpg\", \"uploads/chat_images/img_6abce426cc77f_1790764070.png\"]'),
-(23, 1, 11, 1, 'ghbdtn', '2026-09-30 11:08:21', 1, NULL, '[\"uploads/chat_images/img_6abceda585be1_1790766501.jpg\"]'),
-(24, 1, 11, 1, NULL, '2026-09-30 11:37:16', 1, NULL, '[\"uploads/chat_images/img_6abcf46be70f3_1790768235.jpg\"]'),
-(25, 1, 11, 1, 'ffff', '2026-09-30 11:41:11', 1, NULL, NULL),
-(26, 1, 11, 1, NULL, '2026-09-30 11:41:30', 1, NULL, '[\"uploads/chat_images/img_6abcf56aa9941_1790768490.jpg\"]'),
-(27, 1, 11, 1, 'апра', '2026-09-30 13:24:40', 1, NULL, NULL),
-(28, 1, 11, 1, 'авпва', '2026-10-01 10:14:20', 1, NULL, NULL),
-(29, 1, 11, 1, NULL, '2026-10-01 13:17:40', 1, NULL, '[\"uploads/chat_images/img_6abe5d747604f_1790860660.jpg\"]'),
-(30, 1, 11, 1, NULL, '2026-10-01 13:42:16', 1, NULL, '[\"uploads/chat_images/img_6abe633893dc6_1790862136.jpg\"]'),
-(31, 1, 11, 1, NULL, '2026-10-01 13:52:45', 1, NULL, '[\"uploads/chat_images/img_6abe65adcf3d4_1790862765.jpg\"]'),
-(32, 1, 11, 1, NULL, '2026-10-02 07:59:57', 0, NULL, '[\"uploads/chat_images/img_6abf647d05426_1790927997.jpg\"]'),
-(33, 1, 11, 1, NULL, '2026-10-02 08:16:44', 0, NULL, '[\"uploads/chat_images/img_6abf686c4f055_1790929004.jpg\", \"uploads/chat_images/img_6abf686c5ad8f_1790929004.png\"]'),
-(34, 1, 11, 1, NULL, '2026-10-02 08:18:02', 0, NULL, '[\"uploads/chat_images/img_6abf68ba4438f_1790929082.png\"]'),
-(35, 1, 11, 1, NULL, '2026-10-02 08:26:51', 0, NULL, '[\"uploads/chat_images/img_6abf6acb30755_1790929611.jpg\", \"uploads/chat_images/img_6abf6acb42b72_1790929611.png\"]'),
-(36, 1, 11, 1, NULL, '2026-10-02 10:17:50', 0, NULL, '[\"uploads/chat_images/img_6abf84ce78e3b_1790936270.png\", \"uploads/chat_images/img_6abf84ce85069_1790936270.png\", \"uploads/chat_images/img_6abf84ce8e377_1790936270.png\", \"uploads/chat_images/img_6abf84ce9427b_1790936270.png\"]'),
-(37, 1, 11, 1, NULL, '2026-10-02 11:56:38', 0, NULL, '[\"uploads/chat_images/img_6abf9bf6526e4_1790942198.jpg\", \"uploads/chat_images/img_6abf9bf65e1da_1790942198.jpg\", \"uploads/chat_images/img_6abf9bf6687e0_1790942198.png\"]'),
-(38, 1, 11, 1, NULL, '2026-10-02 12:16:30', 0, NULL, '[\"uploads/chat_images/img_6abfa09deb60b_1790943389.jpg\", \"uploads/chat_images/img_6abfa09e03f1e_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e0eb79_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e195e2_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e26b85_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e3263a_1790943390.png\", \"uploads/chat_images/img_6abfa09e35116_1790943390.jpg\"]'),
-(39, 1, 11, 1, 'hgfh', '2026-10-02 13:23:06', 0, NULL, NULL),
-(40, 1, 11, 1, 'ddd', '2026-10-02 13:23:45', 0, NULL, NULL);
+INSERT INTO `messages` (`id`, `user_id`, `to_user_id`, `room_id`, `text`, `created_at`, `is_read`, `image_path`, `image_paths`, `media_path`) VALUES
+(1, 1, 11, 1, 'jjj', '2026-09-28 13:48:34', 1, NULL, NULL, NULL),
+(2, 1, 11, 1, 'gg', '2026-09-29 05:48:55', 1, NULL, NULL, NULL),
+(3, 1, 11, 1, NULL, '2026-09-29 05:51:41', 1, 'uploads/chat_images/img_6abb51ecd25b2_1790661100.jpg', NULL, NULL),
+(4, 11, 1, 1, 'ghenj', '2026-09-29 06:07:41', 1, NULL, NULL, NULL),
+(5, 1, 11, 1, 'fff', '2026-09-29 07:18:37', 1, NULL, NULL, NULL),
+(6, 1, 11, 1, NULL, '2026-09-29 07:18:49', 1, NULL, '[\"uploads/chat_images/img_6abb665971400_1790666329.jpg\"]', NULL),
+(7, 1, 11, 1, NULL, '2026-09-29 07:19:21', 1, NULL, '[\"uploads/chat_images/img_6abb667919e28_1790666361.jpg\"]', NULL),
+(8, 1, 11, 1, NULL, '2026-09-29 11:16:14', 1, NULL, '[\"uploads/chat_images/img_6abb9dfde7897_1790680573.jpg\", \"uploads/chat_images/img_6abb9dfe00fcf_1790680574.png\"]', NULL),
+(9, 1, 11, 1, 'апап', '2026-09-29 11:16:23', 1, NULL, NULL, NULL),
+(10, 1, 11, 1, NULL, '2026-09-29 11:16:35', 1, NULL, '[\"uploads/chat_images/img_6abb9e12dc9d6_1790680594.jpg\"]', NULL),
+(11, 1, 11, 1, NULL, '2026-09-29 13:03:23', 1, NULL, '[\"uploads/chat_images/img_6abbb71b92af8_1790687003.jpg\", \"uploads/chat_images/img_6abbb71ba144b_1790687003.jpg\", \"uploads/chat_images/img_6abbb71baef5f_1790687003.png\", \"uploads/chat_images/img_6abbb71bb2047_1790687003.png\"]', NULL),
+(12, 1, 11, 1, 'fdgfg', '2026-09-29 13:13:31', 1, NULL, NULL, NULL),
+(13, 1, 11, 1, NULL, '2026-09-29 13:14:07', 1, NULL, '[\"uploads/chat_images/img_6abbb99fbb358_1790687647.jpg\"]', NULL),
+(14, 1, 11, 1, 'kk', '2026-09-30 08:29:23', 1, NULL, NULL, NULL),
+(15, 1, 11, 1, 'dd', '2026-09-30 08:31:00', 1, NULL, NULL, NULL),
+(16, 1, 11, 1, NULL, '2026-09-30 08:52:28', 1, NULL, '[\"uploads/chat_images/img_6abccdccbc716_1790758348.jpg\"]', NULL),
+(17, 1, 11, 1, 'hhh', '2026-09-30 08:52:43', 1, NULL, NULL, NULL),
+(18, 1, 11, 1, NULL, '2026-09-30 08:53:02', 1, NULL, '[\"uploads/chat_images/img_6abccdee7e6e9_1790758382.jpg\"]', NULL),
+(19, 1, 11, 1, NULL, '2026-09-30 08:54:14', 1, NULL, '[\"uploads/chat_images/img_6abcce363c0ac_1790758454.jpg\", \"uploads/chat_images/img_6abcce3646fa4_1790758454.png\", \"uploads/chat_images/img_6abcce364a2a2_1790758454.png\"]', NULL),
+(20, 1, 11, 1, NULL, '2026-09-30 10:27:34', 1, NULL, '[\"uploads/chat_images/img_6abce4160669e_1790764054.jpg\"]', NULL),
+(21, 1, 11, 1, 'fgfg', '2026-09-30 10:27:41', 1, NULL, NULL, NULL),
+(22, 1, 11, 1, NULL, '2026-09-30 10:27:50', 1, NULL, '[\"uploads/chat_images/img_6abce426bd61b_1790764070.jpg\", \"uploads/chat_images/img_6abce426cc77f_1790764070.png\"]', NULL),
+(23, 1, 11, 1, 'ghbdtn', '2026-09-30 11:08:21', 1, NULL, '[\"uploads/chat_images/img_6abceda585be1_1790766501.jpg\"]', NULL),
+(24, 1, 11, 1, NULL, '2026-09-30 11:37:16', 1, NULL, '[\"uploads/chat_images/img_6abcf46be70f3_1790768235.jpg\"]', NULL),
+(25, 1, 11, 1, 'ffff', '2026-09-30 11:41:11', 1, NULL, NULL, NULL),
+(26, 1, 11, 1, NULL, '2026-09-30 11:41:30', 1, NULL, '[\"uploads/chat_images/img_6abcf56aa9941_1790768490.jpg\"]', NULL),
+(27, 1, 11, 1, 'апра', '2026-09-30 13:24:40', 1, NULL, NULL, NULL),
+(28, 1, 11, 1, 'авпва', '2026-10-01 10:14:20', 1, NULL, NULL, NULL),
+(29, 1, 11, 1, NULL, '2026-10-01 13:17:40', 1, NULL, '[\"uploads/chat_images/img_6abe5d747604f_1790860660.jpg\"]', NULL),
+(30, 1, 11, 1, NULL, '2026-10-01 13:42:16', 1, NULL, '[\"uploads/chat_images/img_6abe633893dc6_1790862136.jpg\"]', NULL),
+(31, 1, 11, 1, NULL, '2026-10-01 13:52:45', 1, NULL, '[\"uploads/chat_images/img_6abe65adcf3d4_1790862765.jpg\"]', NULL),
+(32, 1, 11, 1, NULL, '2026-10-02 07:59:57', 0, NULL, '[\"uploads/chat_images/img_6abf647d05426_1790927997.jpg\"]', NULL),
+(33, 1, 11, 1, NULL, '2026-10-02 08:16:44', 0, NULL, '[\"uploads/chat_images/img_6abf686c4f055_1790929004.jpg\", \"uploads/chat_images/img_6abf686c5ad8f_1790929004.png\"]', NULL),
+(34, 1, 11, 1, NULL, '2026-10-02 08:18:02', 0, NULL, '[\"uploads/chat_images/img_6abf68ba4438f_1790929082.png\"]', NULL),
+(35, 1, 11, 1, NULL, '2026-10-02 08:26:51', 0, NULL, '[\"uploads/chat_images/img_6abf6acb30755_1790929611.jpg\", \"uploads/chat_images/img_6abf6acb42b72_1790929611.png\"]', NULL),
+(36, 1, 11, 1, NULL, '2026-10-02 10:17:50', 0, NULL, '[\"uploads/chat_images/img_6abf84ce78e3b_1790936270.png\", \"uploads/chat_images/img_6abf84ce85069_1790936270.png\", \"uploads/chat_images/img_6abf84ce8e377_1790936270.png\", \"uploads/chat_images/img_6abf84ce9427b_1790936270.png\"]', NULL),
+(37, 1, 11, 1, NULL, '2026-10-02 11:56:38', 0, NULL, '[\"uploads/chat_images/img_6abf9bf6526e4_1790942198.jpg\", \"uploads/chat_images/img_6abf9bf65e1da_1790942198.jpg\", \"uploads/chat_images/img_6abf9bf6687e0_1790942198.png\"]', NULL),
+(38, 1, 11, 1, NULL, '2026-10-02 12:16:30', 0, NULL, '[\"uploads/chat_images/img_6abfa09deb60b_1790943389.jpg\", \"uploads/chat_images/img_6abfa09e03f1e_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e0eb79_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e195e2_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e26b85_1790943390.jpg\", \"uploads/chat_images/img_6abfa09e3263a_1790943390.png\", \"uploads/chat_images/img_6abfa09e35116_1790943390.jpg\"]', NULL),
+(39, 1, 11, 1, 'hgfh', '2026-10-02 13:23:06', 0, NULL, NULL, NULL),
+(40, 1, 11, 1, 'ddd', '2026-10-02 13:23:45', 0, NULL, NULL, NULL),
+(41, 1, 11, 1, NULL, '2026-10-07 13:28:04', 0, NULL, '[\"uploads/chat_images/img_6ac648e3c1fc4_1791379683.jpg\"]', NULL),
+(42, 1, 11, 1, 'пп', '2026-10-08 08:16:46', 0, NULL, NULL, NULL),
+(43, 1, 11, 1, NULL, '2026-10-08 11:49:16', 0, NULL, NULL, '[{\"mime\": \"application/x-empty\", \"name\": \"Текстовый документ (2).txt\", \"path\": \"/uploads/files/53efb9aaefbcd74b.txt\", \"size\": 0, \"type\": \"file\"}]'),
+(44, 1, 11, 1, NULL, '2026-10-08 13:37:23', 0, NULL, NULL, '[{\"mime\": \"image/jpeg\", \"name\": \"Маша.jpg\", \"path\": \"/uploads/images/7525bc2d1fe3c56d.jpg\", \"size\": 34841, \"type\": \"image\"}]'),
+(45, 1, 11, 1, NULL, '2026-10-08 14:00:05', 0, NULL, NULL, '[{\"mime\": \"application/x-empty\", \"name\": \"Текстовый документ (2).txt\", \"path\": \"/uploads/files/83ef12d5ac8b4c43.txt\", \"size\": 0, \"type\": \"file\"}]');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `message_media`
+--
+
+CREATE TABLE `message_media` (
+  `id` int(11) NOT NULL,
+  `message_id` int(11) NOT NULL,
+  `type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT 'file',
+  `path` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mime` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `message_media`
+--
+
+INSERT INTO `message_media` (`id`, `message_id`, `type`, `path`, `mime`, `name`, `created_at`) VALUES
+(1, 43, 'file', '/uploads/files/53efb9aaefbcd74b.txt', 'application/x-empty', 'Текстовый документ (2).txt', '2026-10-08 11:49:16'),
+(2, 44, 'image', '/uploads/images/7525bc2d1fe3c56d.jpg', 'image/jpeg', 'Маша.jpg', '2026-10-08 13:37:23'),
+(3, 45, 'file', '/uploads/files/83ef12d5ac8b4c43.txt', 'application/x-empty', 'Текстовый документ (2).txt', '2026-10-08 14:00:05');
 
 -- --------------------------------------------------------
 
@@ -145,6 +176,13 @@ ALTER TABLE `messages`
   ADD KEY `room_id` (`room_id`);
 
 --
+-- Индексы таблицы `message_media`
+--
+ALTER TABLE `message_media`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `message_id` (`message_id`);
+
+--
 -- Индексы таблицы `rooms`
 --
 ALTER TABLE `rooms`
@@ -166,7 +204,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+
+--
+-- AUTO_INCREMENT для таблицы `message_media`
+--
+ALTER TABLE `message_media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `rooms`
@@ -191,6 +235,12 @@ ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`to_user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`);
+
+--
+-- Ограничения внешнего ключа таблицы `message_media`
+--
+ALTER TABLE `message_media`
+  ADD CONSTRAINT `message_media_ibfk_1` FOREIGN KEY (`message_id`) REFERENCES `messages` (`id`) ON DELETE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `rooms`
